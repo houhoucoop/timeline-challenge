@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 
 type NumberInputProps = {
   value?: number;
@@ -21,6 +21,12 @@ export const NumberInput = ({
 }: NumberInputProps) => {
   const [inputValue, setInputValue] = useState<string>(defaultValue.toString());
   const isEscapeBlurRef = useRef(false);
+
+  useEffect(() => {
+    if (value.toString() !== inputValue) {
+      setInputValue(value.toString());
+    }
+  }, [value]);
 
   const formatValue = (value: number): number => {
     if (isNaN(value)) return 0; // handle non-numeric values

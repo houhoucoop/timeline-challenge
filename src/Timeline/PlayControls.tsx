@@ -1,12 +1,31 @@
+import { useEffect } from "react";
 import { NumberInput } from "./NumberInput";
+import {
+  DEFAULT_STEP,
+  CURRENT_MIN_TIME,
+  DURATION_MIN_TIME,
+  DURATION_MAX_TIME,
+} from "./utils/constants";
 
 type PlayControlsProps = {
   time: number;
   setTime: (time: number) => void;
+  durationTime: number;
+  setDurationTime: (time: number) => void;
 };
 
-export const PlayControls = ({ time, setTime }: PlayControlsProps) => {
-  const handleCurrentChange = (value: number) => setTime(value);
+export const PlayControls = ({
+  time,
+  setTime,
+  durationTime,
+  setDurationTime,
+}: PlayControlsProps) => {
+  // ensure current time does not exceed duration time
+  useEffect(() => {
+    if (time > durationTime) {
+      setTime(durationTime);
+    }
+  }, [time, durationTime, setTime]);
 
   return (
     <div
@@ -19,23 +38,23 @@ export const PlayControls = ({ time, setTime }: PlayControlsProps) => {
         <NumberInput
           dataTestId="time"
           value={time}
-          min={0}
-          max={2000}
-          step={10}
-          onChange={handleCurrentChange}
-          defaultValue={0}
+          defaultValue={time}
+          min={CURRENT_MIN_TIME}
+          max={durationTime}
+          step={DEFAULT_STEP}
+          onChange={setTime}
         />
       </fieldset>
       -
       <fieldset className="flex gap-1">
-        <input
-          className="bg-gray-700 px-1 rounded"
-          type="number"
-          data-testid="max-time"
-          min={100}
-          max={2000}
-          step={10}
-          defaultValue={2000}
+        <NumberInput
+          dataTestId="max-time"
+          value={durationTime}
+          defaultValue={durationTime}
+          min={DURATION_MIN_TIME}
+          max={DURATION_MAX_TIME}
+          step={DEFAULT_STEP}
+          onChange={setDurationTime}
         />
         Duration
       </fieldset>
