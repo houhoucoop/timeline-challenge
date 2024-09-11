@@ -5,19 +5,20 @@ import {
   CURRENT_MIN_TIME,
   DURATION_MIN_TIME,
   DURATION_MAX_TIME,
+  DEFAULT_DURATION_TIME,
 } from "./utils/constants";
 
 type PlayControlsProps = {
   time: number;
   setTime: (time: number) => void;
-  durationTime: number;
+  durationTime?: number;
   setDurationTime: (time: number) => void;
 };
 
 export const PlayControls = ({
   time,
   setTime,
-  durationTime,
+  durationTime = DEFAULT_DURATION_TIME,
   setDurationTime,
 }: PlayControlsProps) => {
   // ensure current time does not exceed duration time
