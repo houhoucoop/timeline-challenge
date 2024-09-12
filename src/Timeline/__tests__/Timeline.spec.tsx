@@ -102,4 +102,24 @@ describe("Timeline component", () => {
       expect(playheadStyle.visibility).toBe("visible");
     });
   });
+
+  describe("Vertical scroll", () => {
+    it("synchronizes vertical scroll between TrackList and KeyframeList", () => {
+      renderComponent();
+
+      const trackList = screen.getByTestId("track-list");
+      const keyframeList = screen.getByTestId("keyframe-list");
+
+      expect(trackList.scrollTop).toBe(0);
+      expect(keyframeList.scrollTop).toBe(0);
+
+      // simulate horizontal scroll on the TrackList component
+      fireEvent.scroll(trackList, { target: { scrollTop: 100 } });
+      expect(keyframeList.scrollTop).toBe(100);
+
+      // simulate horizontal scroll on the KeyframeList component
+      fireEvent.scroll(keyframeList, { target: { scrollTop: 200 } });
+      expect(trackList.scrollTop).toBe(200);
+    });
+  });
 });

@@ -10,6 +10,7 @@ export const PLAYHEAD_WIDTH = 2;
 
 export const REF_KEYS = {
   RULER: "ruler",
+  TRACK_LIST: "trackList",
   KEYFRAME_LIST: "keyframeList",
   PLAY_HEAD: "playhead",
 };
