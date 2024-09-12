@@ -2,8 +2,8 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Ruler } from "../Ruler";
 
-const setTimeMock = jest.fn();
-const defaultProps = { time: 0, setTime: setTimeMock };
+const onTimeChangeMock = jest.fn();
+const defaultProps = { time: 0, onTimeChange: onTimeChangeMock };
 
 const renderComponent = (props = {}) => {
   const customProps = { ...defaultProps, ...props };
@@ -15,7 +15,7 @@ const renderComponent = (props = {}) => {
 };
 
 describe("Ruler component", () => {
-  it("sets time on double click", async () => {
+  it("sets time on double click", () => {
     renderComponent();
 
     const ruler = screen.getByTestId("ruler");
@@ -23,10 +23,10 @@ describe("Ruler component", () => {
     // simulate double-click
     fireEvent.doubleClick(ruler, { clientX: 45 });
 
-    expect(setTimeMock).toHaveBeenCalledWith(50);
+    expect(onTimeChangeMock).toHaveBeenCalledWith(50);
   });
 
-  it("updates time while dragging", async () => {
+  it("updates time while dragging", () => {
     renderComponent();
 
     const ruler = screen.getByTestId("ruler");
@@ -36,6 +36,6 @@ describe("Ruler component", () => {
     fireEvent.mouseMove(ruler, { clientX: 95 });
     fireEvent.mouseUp(ruler);
 
-    expect(setTimeMock).toHaveBeenCalledWith(100);
+    expect(onTimeChangeMock).toHaveBeenCalledWith(100);
   });
 });

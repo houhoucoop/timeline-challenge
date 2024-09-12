@@ -1,4 +1,12 @@
-import React, { useCallback, useRef, useState, useEffect } from "react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  ChangeEvent,
+  KeyboardEvent,
+  FocusEvent,
+} from "react";
+import { roundToStep, clampValue } from "./utils/utils";
 
 type NumberInputProps = {
   value?: number;
@@ -31,8 +39,8 @@ export const NumberInput = ({
   const formatValue = (value: number): number => {
     if (isNaN(value)) return 0; // handle non-numeric values
 
-    const roundedValue = Math.round(value / 10) * 10;
-    const clampedValue = Math.max(min, Math.min(roundedValue, max)); // clamp between min and max
+    const roundedValue = roundToStep(value);
+    const clampedValue = clampValue(roundedValue, min, max);
 
     return clampedValue;
   };
@@ -49,24 +57,24 @@ export const NumberInput = ({
     onChange(formattedValue);
   };
 
-  const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
 
-      // handle user typing
-      if ((e.nativeEvent as InputEvent).inputType) {
-        setInputValue(value);
-      } else {
-        updateValues(Number(value)); //handle native step buttons
-      }
-    },
-    [onChange]
-  );
+    // handle user typing
+    if ((e.nativeEvent as InputEvent).inputType) {
+      setInputValue(value);
+    } else {
+      updateValues(Number(value)); //handle native step buttons
+    }
+  };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
 
     switch (e.key) {
+      case "ARROW_UP" || "ARROW_DOWN":
+        target.select();
+        break;
       case "Enter":
         target.blur();
         break;
@@ -80,7 +88,7 @@ export const NumberInput = ({
     }
   };
 
-  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleFocus = (e: FocusEvent<HTMLInputElement>) => {
     e.target.select();
   };
 

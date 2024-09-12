@@ -2,13 +2,13 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { PlayControls } from "../PlayControls";
 
-const setTimeMock = jest.fn();
-const setDurationTimeMock = jest.fn();
+const onTimeChangeMock = jest.fn();
+const onDurationTimeChangeMock = jest.fn();
 const defaultProps = {
   time: 0,
-  setTime: setTimeMock,
+  onTimeChange: onTimeChangeMock,
   durationTime: 2000,
-  setDurationTime: setDurationTimeMock,
+  onDurationTimeChange: onDurationTimeChangeMock,
 };
 const renderComponent = (props = {}) => {
   const customProps = { ...defaultProps, ...props };
@@ -39,21 +39,6 @@ describe("PlayControls component", () => {
     await user.keyboard("{enter}");
 
     expect(timeInput).toHaveValue(2000);
-  });
-
-  // TODO: fix rerender issue
-  it.skip("ensures current time does not exceed the newly set duration", async () => {
-    const { user } = renderComponent();
-    const timeInput = screen.getByTestId("time");
-    const durationTimeInput = screen.getByTestId("max-time");
-
-    await user.type(timeInput, "2000");
-    await user.tab();
-    await user.type(durationTimeInput, "1000");
-    await user.keyboard("{enter}");
-
-    expect(timeInput).toHaveValue(1000);
-    expect(durationTimeInput).toHaveValue(1000);
   });
 
   it("ensures duration is always between 100ms and 6000ms", async () => {

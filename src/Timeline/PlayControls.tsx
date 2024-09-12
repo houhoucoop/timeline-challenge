@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { NumberInput } from "./NumberInput";
 import {
   DEFAULT_STEP,
@@ -10,24 +9,17 @@ import {
 
 type PlayControlsProps = {
   time: number;
-  setTime: (time: number) => void;
+  onTimeChange: (time: number) => void;
   durationTime?: number;
-  setDurationTime: (time: number) => void;
+  onDurationTimeChange: (time: number) => void;
 };
 
 export const PlayControls = ({
   time,
-  setTime,
+  onTimeChange,
   durationTime = DEFAULT_DURATION_TIME,
-  setDurationTime,
+  onDurationTimeChange,
 }: PlayControlsProps) => {
-  // ensure current time does not exceed duration time
-  useEffect(() => {
-    if (time > durationTime) {
-      setTime(durationTime);
-    }
-  }, [time, durationTime, setTime]);
-
   return (
     <div
       className="flex items-center justify-between border-b border-r border-solid border-gray-700
@@ -43,7 +35,7 @@ export const PlayControls = ({
           min={CURRENT_MIN_TIME}
           max={durationTime}
           step={DEFAULT_STEP}
-          onChange={setTime}
+          onChange={onTimeChange}
         />
       </fieldset>
       -
@@ -55,7 +47,7 @@ export const PlayControls = ({
           min={DURATION_MIN_TIME}
           max={DURATION_MAX_TIME}
           step={DEFAULT_STEP}
-          onChange={setDurationTime}
+          onChange={onDurationTimeChange}
         />
         Duration
       </fieldset>

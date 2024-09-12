@@ -1,38 +1,36 @@
 import { useRef, forwardRef, MouseEvent } from "react";
 import { DEFAULT_DURATION_TIME } from "./utils/constants";
+import { roundToStep } from "./utils/utils";
 
 type RulerProps = {
   width?: string;
-  setTime: (time: number) => void;
+  onTimeChange: (time: number) => void;
 };
 
 export const Ruler = forwardRef<HTMLDivElement, RulerProps>(
-  ({ width = `${DEFAULT_DURATION_TIME}px`, setTime }, ref) => {
+  ({ width = `${DEFAULT_DURATION_TIME}px`, onTimeChange }, ref) => {
     const isDragging = useRef(false);
 
-    const getRoundedValue = (offsetX: number): number => {
-      return Math.round(offsetX / 10) * 10;
+    const updateTime = (e: MouseEvent<HTMLDivElement>) => {
+      const rect = (e.target as HTMLDivElement).getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const roundedValue = roundToStep(x);
+
+      onTimeChange(roundedValue);
     };
 
     const handleDoubleClick = (e: MouseEvent<HTMLDivElement>) => {
-      const rect = (e.target as HTMLDivElement).getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const roundedValue = getRoundedValue(x);
-
-      setTime(roundedValue);
+      updateTime(e);
     };
 
-    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
       e.preventDefault(); // prevents text selection during dragging
       isDragging.current = true;
     };
 
     const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
       if (isDragging.current) {
-        const rect = (e.target as HTMLDivElement).getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const roundedValue = getRoundedValue(x);
-        setTime(roundedValue);
+        updateTime(e);
       }
     };
 

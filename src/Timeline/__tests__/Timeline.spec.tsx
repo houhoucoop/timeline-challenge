@@ -1,4 +1,4 @@
-import { screen, render, fireEvent } from "@testing-library/react";
+import { screen, render, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Timeline } from "../Timeline";
 
@@ -10,12 +10,38 @@ const renderComponent = () => {
 };
 
 describe("Timeline component", () => {
-  it("updates time and Playhead position when double-clicking on the Ruler", async () => {
+  it("ensures current time does not exceed the newly set duration", async () => {
+    const { user } = renderComponent();
+    let timeInput, durationTimeInput;
+    timeInput = screen.getByTestId("time");
+    durationTimeInput = screen.getByTestId("max-time");
+
+    expect(timeInput).toBeInTheDocument();
+    expect(durationTimeInput).toBeInTheDocument();
+
+    await user.clear(timeInput);
+    await user.type(timeInput, "2000");
+    await user.tab();
+
+    await user.clear(durationTimeInput);
+    await user.type(durationTimeInput, "1000");
+    await user.keyboard("{enter}");
+
+    await waitFor(() => {
+      timeInput = screen.getByTestId("time");
+      durationTimeInput = screen.getByTestId("max-time");
+
+      expect(timeInput).toHaveValue(1000);
+      expect(durationTimeInput).toHaveValue(1000);
+    });
+  });
+
+  it("updates time and Playhead position when double-clicking on the Ruler", () => {
     renderComponent();
 
     const ruler = screen.getByTestId("ruler");
 
-    // Simulate a double-click at position 100px
+    // simulate a double-click at position 100px
     fireEvent.doubleClick(ruler, { clientX: 45 });
 
     const playhead = screen.getByTestId("playhead");
@@ -24,7 +50,7 @@ describe("Timeline component", () => {
     expect(playheadStyle.transform).toBe("translateX(50px)");
   });
 
-  it("updates playhead position on dragging the ruler", async () => {
+  it("updates Playhead position on dragging the ruler", () => {
     renderComponent();
 
     const ruler = screen.getByTestId("ruler");
